@@ -30,6 +30,23 @@ One way is to get rid of the Company name in the initial select
 */
 
 
+
+USE Northwind
+
+SELECT
+      Region
+      ,Country
+      ,COUNT(CustomerID) AS "Customers"
+  FROM Customers
+GROUP BY Region
+      ,Country
+
+/* 
+Or we can add company name into the group by
+
+As long as every column not having stuff done to it in both, it's good!
+*/
+
 USE Northwind
 
 SELECT
@@ -43,11 +60,6 @@ GROUP BY CompanyName
       ,Country
 
 
-/* 
-Or we can add company name into the group by
-
-As long as every column not having stuff done to it in both, it's good!
-*/
 
 
 USE Northwind

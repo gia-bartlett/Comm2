@@ -45,3 +45,30 @@ SELECT DAY(e.BirthDate) AS "day_of_birth" FROM Employees e;
 SELECT DATEDIFF(yy, e.HireDate, SYSDATETIME()) FROM Employees e;
 
 SELECT DATEDIFF(yy, e.HireDate, GETDATE()) FROM Employees e;
+
+--retirement date--
+SELECT CONCAT(FirstName, ' ', LastName) AS "name"
+      ,DATEDIFF(YY, BirthDate, GETDATE()) AS "age"
+FROM Employees;
+
+
+--When are these employees due to retire?--
+--Option 1--
+SELECT CONCAT(FirstName, ' ', LastName) AS "name"
+      ,DATEDIFF(YY, BirthDate, GETDATE()) AS "age",
+CASE
+WHEN DATEDIFF(YY, e.BirthDate, GETDATE()) >= 65 THEN 'Retired'
+WHEN DATEDIFF(YY, e.BirthDate, GETDATE()) >= 60 THEN 'Retirement Due'
+ELSE 'More than 5 years to go'
+END AS "retirement_satus"
+FROM Employees e;
+
+--Option 2--
+SELECT CASE
+WHEN DATEDIFF(YY, e.BirthDate, GETDATE()) >= 65 THEN 'Retired'
+WHEN DATEDIFF(YY, e.BirthDate, GETDATE()) >= 60 THEN 'Retirement Due'
+ELSE 'More than 5 years to go'
+END AS "retirement_satus",
+CONCAT(FirstName, ' ', LastName) AS "name"
+      ,DATEDIFF(YY, BirthDate, GETDATE()) AS "age"
+FROM Employees e;

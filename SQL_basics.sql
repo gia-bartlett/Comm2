@@ -1,3 +1,10 @@
+--single line comments--
+/*multi
+line
+comments*/
+
+--Relational databases coined by Edgar F. Codd--
+
 --DELETE A DATABASE--
 DROP DATABASE georgina_bartlett
 
