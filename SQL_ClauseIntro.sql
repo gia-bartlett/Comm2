@@ -288,4 +288,4 @@ WHERE CHARINDEX('''', p.productName) > 0;
 SELECT p.ProductName 
 FROM Products p
 WHERE p.productName LIKE '%''%';
---Finds single quotes 
+--Finds single quotes--

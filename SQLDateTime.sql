@@ -72,3 +72,6 @@ END AS "retirement_satus",
 CONCAT(FirstName, ' ', LastName) AS "name"
       ,DATEDIFF(YY, BirthDate, GETDATE()) AS "age"
 FROM Employees e;
+
+
+--

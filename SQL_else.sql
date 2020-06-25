@@ -9,3 +9,5 @@ FROM Orders o;
 --CASE statements can be used when you need varying results output based on differing data--
 --Single quotes for data and doubel quotes for column names--
 
+
+--

@@ -62,4 +62,6 @@ FROM Products
 GROUP BY SupplierID
 HAVING AVG(UnitsOnOrder) > 5;
 
+--
+
 
