@@ -104,11 +104,12 @@ GROUP BY s.SupplierID
 ORDER BY "avg_orders" DESC;
 
 /*list orders from orders table and join to the customers and employees table.
-include company name as customer name and first/last name as employee name*
+include company name as customer name and first/last name as employee name
 from the orders table include orderID, order date and freight*/
 
 SELECT o.OrderID
     ,o.Freight
+    ,o.OrderDate
     ,c.CompanyName AS "Customer Name"
     ,CONCAT(e.FirstName, ' ', e.LastName) AS "Employee Name"
 FROM Employees e
@@ -116,3 +117,34 @@ INNER JOIN Orders o
 ON o.EmployeeID = e.EmployeeID
 INNER JOIN Customers c
 ON c.CustomerID = o.CustomerID;
+
+/*
+You started with employees, not order -why?
+INNER will exclude anything which does not have a match in BOTH tables
+The real world has bad data in it, good practice is to start with the table you want everything from
+LEFT join means that you keep everything in the FROM table
+So if you want to ensure that we capture ALL orders (even ones which people may have forgotten to include an employee in)
+This does happen in the real world - lots of NULLs sadly is normal!
+Start with the table you want to know EVERYTHING about (Orders) ie give me ALL orders (not just orders which are declared properly)
+Then LEFT join the additional tables
+INNER works only when you want fields which match in both tables
+What if someone forgets to enter an employee? This will slip through the cracks with an INNER but not with a LEFT
+*/
+
+SELECT o.OrderID
+    ,o.Freight
+    ,o.OrderDate
+    ,c.CompanyName AS "Customer Name"
+    ,CONCAT(e.FirstName, ' ', e.LastName) AS "Employee Name"
+FROM Orders o
+LEFT JOIN Employees e
+ON o.EmployeeID = e.EmployeeID
+LEFT JOIN Customers c
+ON c.CustomerID = o.CustomerID;
+
+/*
+In all likelihood this will give EXACTLY the same results in your set
+However you are probably dealing with a dataset which is designed perfectly
+In the real world be VERY wary of missing data when using INNER joins over left joins!!
+An INNER join serves as a filter - if the data does NOT exist in the joined table, you will lose it!
+*/
