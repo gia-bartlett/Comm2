@@ -109,6 +109,24 @@ VALUES
 SELECT * FROM director;
 
 --ON DELETE CASCADE--
+/*Creating a foreign key with cascade delete.
+It specifies that the child data is deleted when the parent data is deleted.*/
+
+/*Why is this not working Auto and manual way??*/
+
+/*SOLUTION*/
+UPDATE director SET director_name= 'Jamie' where film_id = 2
+
+ALTER TABLE director
+ADD CONSTRAINT film_id
+FOREIGN KEY (film_id) 
+REFERENCES film_table (film_id) ON DELETE CASCADE
+
+DELETE FROM film_table WHERE film_id =1;
+
+SELECT * FROM director;
+
+USE NORTHWIND
 
 
 
