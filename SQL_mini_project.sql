@@ -1,0 +1,12 @@
+--CREATE--
+--SQL DATA types--
+--INSERT INTO--
+--SELECT--
+--WHERE--
+--LIKE--
+--wildcards--
+--CONCAT--
+--formatting dates--
+--AS/alias--
+--JOINs--
+--subqueries--

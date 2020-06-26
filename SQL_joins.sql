@@ -15,7 +15,7 @@ INNER JOIN Customers c
 ON o.CustomerID = c.CustomerID
 ORDER BY c.ContactName;
 
---OUTER JOIN / FULL JOIN--
+--OUTER JOIN / FULL OUTER JOIN--
 --everything is included - both tables AND all matching results--
 SELECT c.ContactName
     ,o.OrderDate
@@ -68,11 +68,6 @@ FROM orders o, orders b
 WHERE o.customerID = b.CustomerID;
  
 
--- Select rows from a Ta
-SELECT *
-FROM Orders o, Orders b
-WHERE o.CustomerID = b.CustomerID;
-
 --CROSS JOIN / CARTESIAN PRODUCT--
 /*paired combination of each row of the first table with each row of the second table
 number of rows in theoutput is the number of rows in table 1 multiplied by number of rows in table 2*/
@@ -119,7 +114,7 @@ INNER JOIN Customers c
 ON c.CustomerID = o.CustomerID;
 
 /*
-You started with employees, not order -why?
+You started with employees, not order -why? Because it was the leftmost table on the ERD
 INNER will exclude anything which does not have a match in BOTH tables
 The real world has bad data in it, good practice is to start with the table you want everything from
 LEFT join means that you keep everything in the FROM table
@@ -148,3 +143,44 @@ However you are probably dealing with a dataset which is designed perfectly
 In the real world be VERY wary of missing data when using INNER joins over left joins!!
 An INNER join serves as a filter - if the data does NOT exist in the joined table, you will lose it!
 */
+
+/*We're looking for all the customer IDs from the from the customer table which are not there in the Orders table:
+there will be no NULLs in the customer table but some customers might not have made orders so might not exist in the orders table.*/
+
+--using a subquery to narrow down our result--
+SELECT c.CompanyName AS "Customer"
+FROM Customers c
+WHERE c.CustomerID NOT IN
+    (SELECT o.CustomerID FROM Orders o);
+
+--We can do this with a FULL JOIN--
+SELECT c.CompanyName
+FROM Customers c
+FULL OUTER JOIN Orders o
+ON c.CustomerID = o.CustomerID
+WHERE o.CustomerID IS NULL;
+
+--we can also do this with a LEFT JOIN because we want all records from the customer table and are bringing in info from the right--
+SELECT c.CompanyName
+FROM Customers c
+LEFT JOIN Orders o
+ON c.CustomerID = o.CustomerID
+WHERE o.CustomerID IS NULL;
+
+--this won't work because
+SELECT c.CompanyName
+FROM Customers c
+RIGHT JOIN Orders o
+ON c.CustomerID = o.CustomerID
+WHERE o.CustomerID IS NULL;
+
+--further examples--
+SELECT od.OrderID
+    ,od.ProductID
+    ,od.UnitPrice
+    ,od.Quantity
+    ,od.Discount
+FROM [Order Details] od
+INNER JOIN  Products p
+    ON od.ProductID=p.ProductID
+        WHERE p.Discontinued = 1;
