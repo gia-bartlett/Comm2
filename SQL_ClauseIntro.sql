@@ -44,6 +44,15 @@ SELECT p.ProductName, p.UnitPrice
 FROM Products p
 WHERE UnitsInStock > 0 AND UnitPrice > 29.99;
 
+/*IN/NOT IN
+The IN operator allows you to specify multiple values in a WHERE clause.
+The IN operator is a shorthand for multiple OR conditions.*/
+SELECT e.TitleOfCourtesy
+    ,e.FirstName
+    ,e.LastName
+FROM Employees e
+WHERE e.TitleOfCourtesy NOT IN ('Ms.','Mrs.');
+
 --Distinct removes duplicates, only unique values--
 SELECT DISTINCT Country FROM Customers
 WHERE ContactTitle ='Owner';
@@ -178,7 +187,7 @@ SELECT c.CompanyName AS 'Company Name', CONCAT(c.City, ' ', c.Country) AS 'City'
 FROM Customers c
 WHERE Region IS NULL;
 
-/*IS NOT NULL*/
+--IS NOT NULL--
 SELECT c.CompanyName AS 'Company Name', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
 FROM Customers c
 WHERE Region IS NOT NULL;
@@ -188,7 +197,7 @@ SELECT * FROM Customers;
 
 SELECT TOP 6 c.Country, c.Region
 FROM Customers c
-WHERE Region  IS NOT NULL;
+WHERE Region IS NOT NULL;
 
 --ARITHMETIC OPERATORS--
 SELECT UnitPrice, Quantity, Discount, UnitPrice * Quantity AS 'Gross Total'
