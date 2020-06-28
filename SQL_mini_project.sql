@@ -168,16 +168,70 @@ FROM [Sparta Table]
 
 /*3.1 List all Employees from the Employees table and who they report to. No Excel required. (5 Marks)*/
 
+SELECT e.EmployeeID
+    ,CONCAT(e.FirstName, ' ', e.LastName) AS "Employee Name"
+    ,e.ReportsTo
+    ,CONCAT(e2.FirstName, ' ', e2.LastName) AS "Reports to Name"
+FROM Employees e
+LEFT JOIN Employees e2
+ON e2.EmployeeID = e.ReportsTo;
 
+/*Calling reports to only give an employee ID which is not clear
+Numeric terminology is not explicit and therefore not very helpful
+Employee 2 does not report to anyone therefore an INNER JOIN would leave him out*/
 
 /*3.2 List all Suppliers with total sales over $10,000 in the Order Details table. Include the Company Name from the Suppliers Table and present as a bar chart*/
 
-
+SELECT s.CompanyName
+    ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2) AS "Total Sales"
+FROM [Order Details] od
+INNER JOIN Products p
+ON od.ProductID = p.ProductID
+INNER JOIN Suppliers s
+ON p.SupplierID = s.SupplierID
+GROUP BY s.CompanyName
+HAVING SUM(od.UnitPrice*od.Quantity*(1-od.Discount)) > 10000
+ORDER BY 2 DESC;
 
 /*3.3 List the Top 10 Customers YTD for the latest year in the Orders file. Based on total value of orders shipped. No Excel required.*/
 
+SELECT TOP 10
+    YEAR(o.OrderDate) AS "Year of Order"
+    ,c.CompanyName AS "Company Name"
+    ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2) AS "Total Sale Price"
+FROM Orders o
+INNER JOIN Customers c
+ON o.CustomerID = c.CustomerID
+INNER JOIN [Order Details] od
+ON o.OrderID = od.OrderID
+WHERE YEAR(o.OrderDate) = 1998
+GROUP BY YEAR(o.OrderDate)
+    ,c.CompanyName
+ORDER BY YEAR(o.OrderDate)
+        ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2)  DESC
 
+/*
+This script will only work while we're in 1998 as the year is hardcoded
+Using (SELECT YEAR(MAX(OrderDate)) FROM Orders) allows this field to become dynamic
+*/
 
 /*3.4 Plot the Average Ship Time by month for all data in the Orders Table using a line chart as below.*/
 
+SELECT MONTH(o.OrderDate) AS "Order Month"
+    ,YEAR(o.OrderDate) AS "Order Year"
+    ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "Ship Days"
+FROM Orders o
+GROUP BY MONTH(o.OrderDate)
+    ,YEAR(o.OrderDate)
 
+/*Must include YEAR as well as MONTH as 1996, 1997 and 1998 all have July's etc*/
+
+/*SELECT MONTH(o.OrderDate) AS "Order Month"
+    ,YEAR(o.OrderDate) AS "Order Year"
+    ,FORMAT(o.OrderDate,'MM-yyyy') AS "Order Month"
+    ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "Ship Days"
+FROM Orders o
+GROUP BY MONTH(o.OrderDate)
+    ,YEAR(o.OrderDate)
+    ,FORMAT(o.OrderDate,'MM-yyyy')
+ORDER BY 2,1*/
