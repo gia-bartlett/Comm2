@@ -113,11 +113,13 @@ WHERE (o.ShipCountry = 'USA' OR o.ShipCountry = 'UK') AND o.Freight > 100;
 
 /*1.8	Write a SQL Statement to identify the Order Number of the Order with the highest amount(value) of discount applied to that order.*/
 
-SELECT TOP 1 od.Discount 
-    ,od.OrderID AS "OrderNumber"
+SELECT od.OrderID AS "OrderNumber"
     ,ROUND((od.UnitPrice * od.Quantity * (od.Discount)),2) AS "HighestNetDiscount" 
 FROM [Order Details] od
-ORDER BY "HighestNetDiscount" DESC
+WHERE (od.UnitPrice * od.Quantity * (od.Discount)) = (
+    SELECT MAX(od2.UnitPrice * od2.Quantity * (od2.Discount)) AS "Discount"
+    FROM [Order Details] od2
+);
 
 --Excercise 2--
 /*2.1 Write the correct SQL statement to create the following table:

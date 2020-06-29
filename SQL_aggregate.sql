@@ -6,6 +6,7 @@ for the total of a column for all rows selected
 
 -AVG:
 for the average of a column for all rows selected
+Does NOT include NULL values
 
 -MIN:
 for the minimus value of a column for all rows selected
@@ -14,7 +15,7 @@ for the minimus value of a column for all rows selected
 for the maximium of a column for all rows selected
 
 -COUNT:
-for the number of NOT NULL rows selected. If * is used then ALL rows are counted.
+<column_name> for the number of NOT NULL rows selected. If * is used then ALL rows are counted.
 */
 
 --SUM--
@@ -36,7 +37,7 @@ FROM Products p
 GROUP BY p.SupplierID;
 
 --AVG--
-SELECT AVG(Quantity) AS "AverageSalary"
+SELECT AVG(Quantity) AS "AverageQuantity"
 FROM [Order Details];
 
 --Use GROUP BY to calculate the AVERAGE reorder level for all products by category ID--
@@ -76,7 +77,18 @@ Select MIN(Quantity) AS "Minimum"
     ,MAX(Quantity) AS "Maximum"
 FROM [Order Details];
 
+SELECT MAX(Freight)
+FROM Orders
+WHERE ShipCountry = 'France';
+
+
+SELECT *
+FROM Orders
+
 --COUNT--
+--How many individaul roles are there in the organisation--
+SELECT COUNT(DISTINCT Title) AS "NumberOfRoles"
+FROM Employees;
 
 --How many orders are there for EmployeeIDs 5 and 7(Total for both)--
 SELECT * FROM Orders;
