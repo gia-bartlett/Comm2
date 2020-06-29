@@ -166,6 +166,7 @@ FROM [Sparta Table]
 
 --Excercise 3--
 /*Write SQL statements to extract the data required for the following charts (create these in Excel):*/
+
 /*Left click top left box to select whole table
 Right click - Copy with Headers to export to Excel*/
 
@@ -181,7 +182,9 @@ ON e2.EmployeeID = e.ReportsTo;
 
 /*Calling reports to only give an employee ID which is not clear
 Numeric terminology is not explicit and therefore not very helpful
-Employee 2 does not report to anyone therefore an INNER JOIN would leave him out*/
+Employee 2 does not report to anyone therefore an INNER JOIN would leave him out - which might be fine here
+BUT what if you were looking at a table with sales data?
+People were missing out data then using an INNER JOIN might leave valuable data out*/
 
 /*3.2 List all Suppliers with total sales over $10,000 in the Order Details table. Include the Company Name from the Suppliers Table and present as a bar chart*/
 
@@ -216,7 +219,7 @@ ORDER BY YEAR(o.OrderDate)
 /*
 This script will only work while we're in 1998 as the year is hardcoded
 Using (SELECT YEAR(MAX(OrderDate)) FROM Orders) allows this field to become dynamic
-*/
+So as soon as 1999 starts the code will begin again - allowing the same code to be used continually instead of having to be updated at the beginning of each year.*/
 
 /*3.4 Plot the Average Ship Time by month for all data in the Orders Table using a line chart as below.*/
 
@@ -227,9 +230,12 @@ FROM Orders o
 GROUP BY MONTH(o.OrderDate)
     ,YEAR(o.OrderDate);
 
-/*Must include YEAR as well as MONTH as 1996, 1997 and 1998 all have July's etc*/
+/*Put decimal points in to make the Excel data more accurate.
+Must include YEAR as well as MONTH as 1996, 1997 and 1998 all have July's etc*/
 
-/*SELECT MONTH(o.OrderDate) AS "Order Month"
+--Another option--
+/*
+SELECT MONTH(o.OrderDate) AS "Order Month"
     ,YEAR(o.OrderDate) AS "Order Year"
     ,FORMAT(o.OrderDate,'MM-yyyy') AS "Order Month"
     ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "Ship Days"
@@ -237,4 +243,5 @@ FROM Orders o
 GROUP BY MONTH(o.OrderDate)
     ,YEAR(o.OrderDate)
     ,FORMAT(o.OrderDate,'MM-yyyy')
-ORDER BY 2,1*/
+ORDER BY 2,1
+*/
