@@ -127,10 +127,11 @@ ORDER BY "Highest Net Discount" DESC
     and include University attended, course taken and mark achieved.
     Add any other columns you feel would be appropriate. 
     IMPORTANT NOTE: For data protection reasons do NOT include date of birth in this exercise.*/
+
 IF OBJECT_ID('Sparta Table', 'U') IS NOT NULL
 DROP TABLE [Sparta Table];
 
-/*added in DROP TABLE but madeit fancy after some reseach.
+/*added in DROP TABLE but made it fancy after some reseach.
 'U' stands for only table names*/
 
 CREATE TABLE [Sparta Table](
@@ -165,6 +166,8 @@ FROM [Sparta Table]
 
 --Excercise 3--
 /*Write SQL statements to extract the data required for the following charts (create these in Excel):*/
+/*Left click top left box to select whole table
+Right click - Copy with Headers to export to Excel*/
 
 /*3.1 List all Employees from the Employees table and who they report to. No Excel required. (5 Marks)*/
 
@@ -222,7 +225,7 @@ SELECT MONTH(o.OrderDate) AS "Order Month"
     ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "Ship Days"
 FROM Orders o
 GROUP BY MONTH(o.OrderDate)
-    ,YEAR(o.OrderDate)
+    ,YEAR(o.OrderDate);
 
 /*Must include YEAR as well as MONTH as 1996, 1997 and 1998 all have July's etc*/
 
