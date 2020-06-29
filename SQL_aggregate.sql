@@ -1,18 +1,23 @@
+/*AGREGATE FUNCTIONS:
+Must give them a column name (AS "<column_name>") other a new column is created with no name
+
+-SUM:
+for the total of a column for all rows selected
+
+-AVG:
+for the average of a column for all rows selected
+
+-MIN:
+for the minimus value of a column for all rows selected
+
+-MAX:
+for the maximium of a column for all rows selected
+
+-COUNT:
+for the number of NOT NULL rows selected. If * is used then ALL rows are counted
+*/
+
 --SUM--
---for the total of a column for all rows selected--
-
-
---AVG--
---for the average of a column for all rows selected--
-
---MIN--
---for the minimus value of a column for all rows selected--
-
---MAX--
---for the maximium of a column for all rows selected--
-
---COUNT--
---for the number of NOT NULL rows selected. If * is used then ALL rows are counted--
 
 SELECT SUM(p.UnitsOnOrder) AS "total_order"
 ,AVG(p.UnitsOnOrder) AS "average_on_order"
@@ -29,6 +34,10 @@ SELECT p.SupplierID, SUM(p.UnitsOnOrder) AS "total_order"
 ,MAX(p.UnitsOnOrder) AS "max_on_order"
 FROM Products p
 GROUP BY p.SupplierID;
+
+--AVG--
+SELECT AVG(Quantity) AS "AverageSalary"
+FROM [Order Details];
 
 --Use GROUP BY to calculate the AVERAGE reorder level for all products by category ID--
 SELECT p.CategoryID, AVG(p.ReorderLevel)
@@ -62,6 +71,24 @@ FROM Products
 GROUP BY SupplierID
 HAVING AVG(UnitsOnOrder) > 5;
 
---
+--MIN/MAX--
+Select MIN(Quantity) AS "Minimum"
+    ,MAX(Quantity) AS "Maximum"
+FROM [Order Details];
+
+--COUNT--
+
+--How many orders are there for EmployeeIDs 5 and 7(Total for both)--
+SELECT * FROM Orders;
+
+SELECT o.EmployeeID 
+    ,COUNT(*) AS 'NumOrdersByEmployeesWithEmployeeID5or7' 
+FROM Orders o
+WHERE EmployeeID IN (5, 7)
+GROUP BY o.EmployeeId;
+
+
+
+
 
 

@@ -40,7 +40,7 @@ SELECT c.CustomerID
     ,CASE
         WHEN c.Region IS NULL THEN CONCAT(c.Address, ', ', c.City, ', ', c.PostalCode, ', ', c.Country)
         ELSE CONCAT(c.Address, ', ', c.City, ', ', c.Region, ', ',  c.PostalCode, ', ', c.Country)
-        END AS "Full Address"
+        END AS "FullAddress"
 FROM Customers c
 WHERE c.City IN ('Paris', 'London');
 
@@ -59,7 +59,7 @@ WHERE p.QuantityPerUnit LIKE '%bottle%';
 SELECT p.ProductID
     ,p.ProductName
     ,p.QuantityPerUnit
-    ,s.CompanyName AS "Supplier Name", s.Country
+    ,s.CompanyName AS "SupplierName", s.Country
 FROM Products p
 INNER JOIN Suppliers s
     ON p.SupplierID = s.SupplierID
@@ -69,7 +69,7 @@ WHERE p.QuantityPerUnit LIKE '%bottle%';
         Include Category Name in result set and list the highest number first.*/
 
 SELECT c.CategoryName
-    ,SUM(c.CategoryID) AS "Number of Products in the Category"
+    ,SUM(c.CategoryID) AS "NumProductsInCategory"
 FROM Products p
 INNER JOIN Categories c
     ON p.CategoryID = c.CategoryID
@@ -79,8 +79,8 @@ ORDER BY SUM(c.CategoryID) DESC;
 /*1.5	List all UK employees using concatenation to join their title of courtesy, first name and last name together.
         Also include their city of residence.*/
 
-SELECT CONCAT(e.TitleOfCourtesy, ' ', e.FirstName, ' ', e.LastName) AS "Employee Name"
-    ,e.City AS "City of Residence"
+SELECT CONCAT(e.TitleOfCourtesy, ' ', e.FirstName, ' ', e.LastName) AS "EmployeeName"
+    ,e.City AS "CityOfResidence"
 FROM Employees e
 WHERE e.Country = 'UK';
 
@@ -89,7 +89,7 @@ WHERE e.Country = 'UK';
 
 SELECT r.RegionID
     ,r.RegionDescription
-    ,ROUND(SUM(od.UnitPrice*od.Quantity),2) AS "Sales Totals"
+    ,ROUND(SUM(od.UnitPrice*od.Quantity),2) AS "SalesTotals"
 FROM Region r
 INNER JOIN Territories t
     ON r.RegionID = t.RegionID
@@ -107,7 +107,7 @@ so looked at total as price instead*/
 
 /*1.7	Count how many Orders have a Freight amount greater than 100.00 and either USA or UK as Ship Country.*/
 
-SELECT COUNT(o.Freight) AS "Freight Total"
+SELECT COUNT(o.Freight) AS "FreightTotal"
     ,o.ShipCountry
 FROM Orders o
 WHERE (o.ShipCountry = 'USA' OR o.ShipCountry = 'UK') AND o.Freight > 100
@@ -116,10 +116,10 @@ GROUP BY o.ShipCountry
 /*1.8	Write a SQL Statement to identify the Order Number of the Order with the highest amount(value) of discount applied to that order.*/
 
 SELECT TOP 1 od.Discount 
-    ,od.OrderID AS "Order Number"
-    ,ROUND((od.UnitPrice * od.Quantity * (od.Discount)),2) AS "Highest Net Discount" 
+    ,od.OrderID AS "OrderNumber"
+    ,ROUND((od.UnitPrice * od.Quantity * (od.Discount)),2) AS "HighestNetDiscount" 
 FROM [Order Details] od
-ORDER BY "Highest Net Discount" DESC
+ORDER BY "HighestNetDiscount" DESC
 
 --Excercise 2--
 /*2.1 Write the correct SQL statement to create the following table:
@@ -173,9 +173,9 @@ Right click - Copy with Headers to export to Excel*/
 /*3.1 List all Employees from the Employees table and who they report to. No Excel required. (5 Marks)*/
 
 SELECT e.EmployeeID
-    ,CONCAT(e.FirstName, ' ', e.LastName) AS "Employee Name"
+    ,CONCAT(e.FirstName, ' ', e.LastName) AS "EmployeeName"
     ,e.ReportsTo
-    ,CONCAT(e2.FirstName, ' ', e2.LastName) AS "Reports to Name"
+    ,CONCAT(e2.FirstName, ' ', e2.LastName) AS "ReportsToName"
 FROM Employees e
 LEFT JOIN Employees e2
 ON e2.EmployeeID = e.ReportsTo;
@@ -189,7 +189,7 @@ People were missing out data then using an INNER JOIN might leave valuable data 
 /*3.2 List all Suppliers with total sales over $10,000 in the Order Details table. Include the Company Name from the Suppliers Table and present as a bar chart*/
 
 SELECT s.CompanyName
-    ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2) AS "Total Sales"
+    ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2) AS "TotalSales"
 FROM [Order Details] od
 INNER JOIN Products p
 ON od.ProductID = p.ProductID
@@ -202,30 +202,37 @@ ORDER BY 2 DESC;
 /*3.3 List the Top 10 Customers YTD for the latest year in the Orders file. Based on total value of orders shipped. No Excel required.*/
 
 SELECT TOP 10
-    YEAR(o.OrderDate) AS "Year of Order"
-    ,c.CompanyName AS "Company Name"
-    ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2) AS "Total Sale Price"
-FROM Orders o
-INNER JOIN Customers c
-ON o.CustomerID = c.CustomerID
-INNER JOIN [Order Details] od
-ON o.OrderID = od.OrderID
-WHERE YEAR(o.OrderDate) = 1998
-GROUP BY YEAR(o.OrderDate)
-    ,c.CompanyName
-ORDER BY YEAR(o.OrderDate)
-        ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2)  DESC
+    a.YearOfOrder
+    ,a.CompanyName
+    ,a.TotalSalePrice
+FROM
+        (SELECT
+            YEAR(o.OrderDate) AS "YearOfOrder"
+            ,c.CompanyName AS "CompanyName"
+            ,ROUND(SUM(od.UnitPrice*od.Quantity*(1-od.Discount)),2) AS "TotalSalePrice"
+        FROM Orders o
+        INNER JOIN Customers c
+        ON o.CustomerID = c.CustomerID
+        INNER JOIN [Order Details] od
+        ON o.OrderID = od.OrderID
+        GROUP BY YEAR(o.OrderDate)
+            ,c.CompanyName) a
+WHERE a.YearOfOrder = (SELECT YEAR(MAX(OrderDate)) FROM Orders)
+ORDER BY a.YearOfOrder
+        ,a.TotalSalePrice  DESC
 
 /*
-This script will only work while we're in 1998 as the year is hardcoded
+Subquery is data prep and then use it once data is in format desired.
+WHERE YEAR(o.OrderDate) = 1998 will only work while we're in 1998 as the year is hardcoded
 Using (SELECT YEAR(MAX(OrderDate)) FROM Orders) allows this field to become dynamic
-So as soon as 1999 starts the code will begin again - allowing the same code to be used continually instead of having to be updated at the beginning of each year.*/
+So as soon as 1999 starts the code will begin again - allowing the same code to be used continually instead of having to be updated at the beginning of each year.
+Used CamelCase because including spaces means that the column later have to be enclosed in [square brackets]*/
 
 /*3.4 Plot the Average Ship Time by month for all data in the Orders Table using a line chart as below.*/
 
-SELECT MONTH(o.OrderDate) AS "Order Month"
-    ,YEAR(o.OrderDate) AS "Order Year"
-    ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "Ship Days"
+SELECT MONTH(o.OrderDate) AS "OrderMonth"
+    ,YEAR(o.OrderDate) AS "OrderYear"
+    ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "ShipDays"
 FROM Orders o
 GROUP BY MONTH(o.OrderDate)
     ,YEAR(o.OrderDate);
@@ -235,10 +242,10 @@ Must include YEAR as well as MONTH as 1996, 1997 and 1998 all have July's etc*/
 
 --Another option--
 /*
-SELECT MONTH(o.OrderDate) AS "Order Month"
-    ,YEAR(o.OrderDate) AS "Order Year"
-    ,FORMAT(o.OrderDate,'MM-yyyy') AS "Order Month"
-    ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "Ship Days"
+SELECT MONTH(o.OrderDate) AS "OrderMonth"
+    ,YEAR(o.OrderDate) AS "OrderYear"
+    ,FORMAT(o.OrderDate,'MM-yyyy') AS "OrderMonth"
+    ,AVG(DATEDIFF(d, o.OrderDate, o.ShippedDate)*1.0) AS "ShipDays"
 FROM Orders o
 GROUP BY MONTH(o.OrderDate)
     ,YEAR(o.OrderDate)

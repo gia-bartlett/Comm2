@@ -1,11 +1,31 @@
---WHERE clause to filter the data--
+/*Covers:
+-DISTINCT
+-WHERE
+-AND/OR
+-IN/NOT IN
+-BETWEEN
+-WILDCARDS (LIKE)
+-
+*/
+
+--DISTINCT--
+--removes duplicates, only unique values--
+SELECT DISTINCT Country FROM Customers
+WHERE ContactTitle ='Owner';
+
+SELECT DISTINCT c.country
+FROM customers c;
+
+
+--WHERE--
+--to filter the data--
 SELECT * FROM Customers
 WHERE City = 'Paris';
 
-SELECT COUNT(*) AS 'Number of Employees in London' FROM Employees
+SELECT COUNT(*) AS 'NumEmployeesInLondon' FROM Employees
 WHERE City='London';
 
-SELECT COUNT(*) AS 'Number of Employees with Title Doctor' FROM Employees
+SELECT COUNT(*) AS 'NumEmployeesWithTitleDoctor' FROM Employees
 WHERE TitleOfCourtesy='Dr.'
 
 SELECT * FROM Employees;
@@ -16,97 +36,23 @@ WHERE Discontinued != 0;
 SELECT * FROM products
 WHERE Discontinued != 0;
 
---Apostrophe--
-'O''''Brien'
-
---Using table Alias. MUST use AS for columuns.  Do the table alias after FROM first then you can use it to easily identify columns in that table--
-SELECT c.CompanyName, c.City, c.Country, c.Region
-FROM Customers c
-WHERE c.Region='BC';
-
---TOP = same as LIMIT but comes immediately after the SELECT--
-SELECT TOP 10 CompanyName, City FROM Customers
-WHERE Country = 'France';
-
 SELECT COUNT(*) FROM Customers WHERE Country='France';
+
 
 --AND/OR--
 /*AND all the criteria need to be fulfilled
-OR - either of the criteria need to be fulfilled*/
+OR - either of the criteria need to be fulfilled
+column name MUST be repeated for each criteria even if both are the same (WHERE <column_1>=<criterion1> AND <column_1>=<criterion2>;)*/
 
 SELECT p.ProductName, p.UnitPrice 
 FROM Products p
 WHERE CategoryID=1 AND Discontinued=0;
 
-/*Using Operators
-Where units in stock are greater than 0 AND greater than 29.99*/
-SELECT p.ProductName, p.UnitPrice
-FROM Products p
-WHERE UnitsInStock > 0 AND UnitPrice > 29.99;
 
-/*IN/NOT IN
-The IN operator allows you to specify multiple values in a WHERE clause.
-The IN operator is a shorthand for multiple OR conditions.*/
-SELECT e.TitleOfCourtesy
-    ,e.FirstName
-    ,e.LastName
-FROM Employees e
-WHERE e.TitleOfCourtesy NOT IN ('Ms.','Mrs.');
-
---Distinct removes duplicates, only unique values--
-SELECT DISTINCT Country FROM Customers
-WHERE ContactTitle ='Owner';
-
-SELECT DISTINCT c.country
-FROM customers c;
-
-/*Wildcards can be used as a substitute for any other characters in a string when using the LIKE operator*/
-
---Begins with U--
-SELECT DISTINCT c.country
-FROM customers c WHERE country LiKE 'U%';
-
---Begins with BR--
-SELECT DISTINCT c.country
-FROM customers c WHERE country LIKE 'BR%';
-
---Ends with A--
-SELECT DISTINCT c.country
-FROM customers c WHERE country LIKE '%A';
-
---Countries starting with U, ending with letter 'A'--
-SELECT DISTINCT c.country
-FROM customers c WHERE country LIKE 'U%A';
-
---Countries either starting with U or A in descending order--
-SELECT DISTINCT c.country
-FROM customers c WHERE country LIKE '[UAM]%'
-ORDER BY c.country DESC;
-
---Countries not starting with U or A or M--
-SELECT DISTINCT c.country
-FROM customers c WHERE country LIKE '[^UAM]%';
-
---Countries not ending with A or E--
-SELECT DISTINCT c.country
-FROM customers c WHERE country LIKE '%[^AE]';
-
---Countries whose 3rd letter is A. '_' substitutes for a single character--
-SELECT DISTINCT c.Country
-FROM customers c 
-WHERE country LIKE '__A%';
-
---Products that begin with Ch--
-SELECT p.ProductName AS 'Product Name'
-FROM Products p 
-WHERE ProductName LIKE 'Ch%';
-
---Select all columns from customer table where regions only contain two characters, end in A or where the second letter is A--
-SELECT * 
-FROM Customers
-WHERE Region LIKE '_A';
-
-/*IN allows multiple results on subquery, = will generate error if you have more than one result on the subquery*/
+--IN/NOT IN--
+/*The IN operator allows you to specify multiple values in a WHERE clause.
+The IN operator is a shorthand for multiple OR conditions.
+IN allows multiple results on subquery, = will generate error if you have more than one result on the subquery*/
 
 --If we want to find customers in two specific named regions--
 SELECT * 
@@ -124,11 +70,116 @@ FROM Customers
 WHERE (Region = 'WA'OR Region ='SP')
 AND country ='Brazil'; --Should only return customers from Brazil where region is WA or SP--
 
---BETWEEN - includes values between and as well as the boundary values--
+--NOT IN--
+SELECT e.TitleOfCourtesy
+    ,e.FirstName
+    ,e.LastName
+FROM Employees e
+WHERE e.TitleOfCourtesy NOT IN ('Ms.','Mrs.');
+
+
+--BETWEEN--
+-- includes values between and as well as the boundary values--
 SELECT * 
 FROM EmployeeTerritories
 WHERE TerritoryID BETWEEN 06800 AND 09999;
 
+
+--WILDCARDS--
+
+/*Wildcards can be used as a substitute for any other characters in a string when using the LIKE operator
+% = any character (any amount)
+_ = substitutes a single character
+^ = NOT
+LIKE = used with % and _ to search for specific pattern
+*/
+
+--Begins with U but followed by any characters--
+SELECT DISTINCT c.country
+FROM customers c WHERE country LiKE 'U%';
+
+--Begins with BR but followed by any characters--
+SELECT DISTINCT c.country
+FROM customers c WHERE country LIKE 'BR%';
+
+--Ends with A but begins with any characters--
+SELECT DISTINCT c.country
+FROM customers c WHERE country LIKE '%A';
+
+--Countries starting with U, ending with letter 'A' with any characters in between--
+SELECT DISTINCT c.country
+FROM customers c WHERE country LIKE 'U%A';
+
+--Products that begin with Ch--
+SELECT p.ProductName AS 'ProductName'
+FROM Products p 
+WHERE ProductName LIKE 'Ch%';
+
+--Countries either starting with U or A in descending order--
+SELECT DISTINCT c.country
+FROM customers c WHERE country LIKE '[UA]%'
+ORDER BY c.country DESC;
+
+--Countries whose 3rd letter is A--
+SELECT DISTINCT c.Country
+FROM customers c 
+WHERE country LIKE '__A%';
+
+--Select all columns from customer table where regions only contain two characters, end in A or where the second letter is A--
+SELECT * 
+FROM Customers
+WHERE Region LIKE '_A';
+
+--Countries NOT starting with U or A or M--
+SELECT DISTINCT c.country
+FROM customers c WHERE country LIKE '[^UAM]%';
+
+--Countries NOT ending with A or E but begins with any characters--
+SELECT DISTINCT c.country
+FROM customers c WHERE country LIKE '%[^AE]';
+
+--Countries with second letter A but ends with any characters--
+SELECT * 
+FROM Customers
+WHERE Country LIKE '_A%';
+
+
+--ORDER BY--
+--sort results ASC is default--
+
+--select all employees but order results by title--
+SELECT *
+FROM Employees
+ORDER BY Title;
+
+--select all employees but order results by title in reverse alphabetical order--
+SELECT *
+FROM Employees
+ORDER BY Title DESC;
+
+--select all employees but order results by title in alphabetical order and last name in alphbetical order--
+SELECT *
+FROM Employees
+ORDER BY Title, LastName;
+
+/*Use ORDER BY to identify the highest Net Total in the Order Details table
+What are the two order numbers with the highest total?*/
+
+SELECT TOP 2
+OrderID,
+Unitprice AS 'UnitPrice',
+Quantity,
+Discount,
+ROUND((UnitPrice * Quantity * (1.00- Discount)),2) AS 'NetTotal'
+FROM [Order Details]
+ORDER BY 'NetTotal' DESC;
+
+
+/*Using Operators
+Where units in stock are greater than 0 AND greater than 29.99*/
+SELECT p.ProductName, p.UnitPrice
+FROM Products p
+WHERE UnitsInStock > 0 AND UnitPrice > 29.99;
 
 --What are names and product IDs of the products with a unit price below 5.00--
 
@@ -152,43 +203,60 @@ SELECT c.CategoryName, c.DESCRIPTION
 FROM categories c
 WHERE c.CategoryName LIKE '[BS]%';
 
---How many orders are there for EmployeeIDs 5 and 7(Total for both)--
-SELECT * FROM Orders;
 
-SELECT COUNT(*) AS 'Number of Orders placed by Employees with Employee ID 5 or 7' 
-FROM Orders o
-WHERE EmployeeID IN (5, 7)
-GROUP BY o.EmployeeId;
 
 SELECT o.orderID, o.EmployeeID
 FROM orders o 
 WHERE EmployeeID IN (5, 7);
 
+--Restricted--
+--Apostrophe--
+'O''''Brien'
+
+--ALIASING--
+--Using table Alias. MUST use AS for columuns.  Do the table alias after FROM first then you can use it to easily identify columns in that table--
+
+SELECT c.CompanyName, c.City, c.Country, c.Region
+FROM Customers c
+WHERE c.Region='BC';
+
+--TOP and LIMIT--
+--TOP comes immediately after the SELECT. LIMIT after the selection--
+SELECT TOP 10 CompanyName, City FROM Customers
+WHERE Country = 'France';
+
+
+/*Using Operators
+Where units in stock are greater than 0 AND greater than 29.99*/
+SELECT p.ProductName, p.UnitPrice
+FROM Products p
+WHERE UnitsInStock > 0 AND UnitPrice > 29.99;
+
 --CONCATENATION--
 
 --'City' select city and country in one column using concat operator +--
 --Option 1--
-SELECT c.companyName AS 'Company Name', c.city + ', ' + ' '+  Country As 'City'
+SELECT c.companyName AS 'CompanyName', c.city + ', ' + ' '+  Country As 'City'
 FROM Customers c;
 
 --Option 2--
-SELECT c.CompanyName AS 'Company Name',
+SELECT c.CompanyName AS 'CompanyName',
 CONCAT(c.city, ', ',c.country) AS City
 FROM Customers c;
 
 /*Write a select using the Employees table and concat First Name and Last Name together. Use column alias to rename the column to Employee Name*/
 SELECT * FROM Employees;
 
-SELECT e.EmployeeID as 'Employee Id', CONCAT(e.FirstName,' ', e.LastName) AS 'Employee Name'
+SELECT e.EmployeeID as 'EmployeeID', CONCAT(e.FirstName,' ', e.LastName) AS 'EmployeeName'
 FROM Employees e;  -- Should return First Name and Last Name in the same columm called Employee Name
 
 /*IS NULL*/
-SELECT c.CompanyName AS 'Company Name', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
+SELECT c.CompanyName AS 'CompanyName', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
 FROM Customers c
 WHERE Region IS NULL;
 
 --IS NOT NULL--
-SELECT c.CompanyName AS 'Company Name', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
+SELECT c.CompanyName AS 'CompanyName', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
 FROM Customers c
 WHERE Region IS NOT NULL;
 
@@ -200,7 +268,7 @@ FROM Customers c
 WHERE Region IS NOT NULL;
 
 --ARITHMETIC OPERATORS--
-SELECT UnitPrice, Quantity, Discount, UnitPrice * Quantity AS 'Gross Total'
+SELECT UnitPrice, Quantity, Discount, UnitPrice * Quantity AS 'GrossTotal'
 FROM [Order Details];
 
 SELECT * FROM [Order Details];
@@ -214,64 +282,17 @@ SELECT
 UnitPrice,
 Quantity, 
 Discount, 
-UnitPrice * Quantity AS 'Gross Total', 
-ROUND((UnitPrice * Quantity * (1.00-Discount)),2) AS 'Net Total'
+UnitPrice * Quantity AS 'GrossTotal', 
+ROUND((UnitPrice * Quantity * (1.00-Discount)),2) AS 'NetTotal'
 FROM [Order Details]
-ORDER BY 'Gross Total' DESC;
-
-/*Use ORDER BY to identify the highest Net Total in the Order Details table
-What are the two order numbers with the highest total?*/
-
-SELECT TOP 2
-OrderID,
-Unitprice AS 'Unit Price',
-Quantity,
-Discount,
-ROUND((UnitPrice * Quantity * (1.00- Discount)),2) AS 'Net Total'
-FROM [Order Details]
-ORDER BY 'Net Total' DESC;
-
---STRING FUNCTIONS--
-USE astha_db
-SELECT * FROM film_table
-
---Returns index of character. In SQL index starts at 1 not 0.
-SELECT film_table, CHARINDEX('S', film_name) AS 'Position of Character'
-FROM film_table;
-
---returns first to third character
-SELECT film_name, SUBSTRING(film_name, 1, 3) AS 'Extracted String' FROM film_table
-
--- Extracts last two characters 
-SELECT film_name, RIGHT(film_name, 2) AS 'Extracted String' FROM film_table;
-
--- Extracts first two characters
-SELECT film_name, LEFT(film_name, 2) AS 'Extracted String' FROM film_table;
-
---Removes white spaces from the end
-SELECT film_name, RTRIM(film_name) AS 'Trimmed String' FROM film_table;
-
---Removes white spaces from the beginning
-SELECT film_name, LTRIM(film_name) AS 'Trimmed String' FROM film_table;
- 
---Removes the space with the character A
-SELECT film_name, REPLACE(film_name, ' ', 'A') AS 'Replaced String' FROM film_table;
-
---Calculates length of string, spaces included.
-SELECT film_name, LEN(film_name) AS 'Length of String' FROM film_table;
-
---UPPER and LOWER. Change to uppercase or lowercase--
-SELECT film_name, 
-UPPER(film_name) AS 'Uppercase String', 
-LOWER(film_name) AS 'Lower String'
-FROM film_table;
+ORDER BY 'GrossTotal' DESC;
 
 --CHARINDEX PRACTICE--
 USE Northwind
 
-SELECT PostalCode 'Post code', 
-LEFT(PostalCode, CHARINDEX(' ', PostalCode)-1) AS 'Post Code Region',
-    CHARINDEX(' ',PostalCode) AS 'Space Found', 
+SELECT PostalCode 'Postcode', 
+LEFT(PostalCode, CHARINDEX(' ', PostalCode)-1) AS 'PostcodeRegion',
+    CHARINDEX(' ',PostalCode) AS 'SpaceFound', 
 Country
 FROM Customers 
 WHERE country ='UK';
