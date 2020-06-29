@@ -5,7 +5,10 @@
 -IN/NOT IN
 -BETWEEN
 -WILDCARDS (LIKE)
--
+-ORDER BY
+-GROUP BY
+-HAVING
+-ALIASING
 */
 
 --DISTINCT--
@@ -143,7 +146,6 @@ SELECT *
 FROM Customers
 WHERE Country LIKE '_A%';
 
-
 --ORDER BY--
 --sort results ASC is default--
 
@@ -173,6 +175,53 @@ Discount,
 ROUND((UnitPrice * Quantity * (1.00- Discount)),2) AS 'NetTotal'
 FROM [Order Details]
 ORDER BY 'NetTotal' DESC;
+
+
+--GROUP BY--
+--follows the FROM--
+
+SELECT ShipCountry
+    ,SUM(Freight) AS "TotalFreight"
+FROM Orders
+GROUP BY ShipCountry;
+
+--Use GROUP BY to calculate the AVERAGE reorder level for all products by category ID--
+SELECT p.CategoryID, AVG(p.ReorderLevel)
+FROM Products p
+GROUP BY p.CategoryID;
+
+
+--HAVING--
+/*Used instead of WHERE when filtering aggregates
+Used AFTER GROUP BY
+WHERE will filter the initial set of data
+HAVING will filter after you've grouped everything*/
+
+--I only want to see suppliers who have an average of 5 or more orders. Can't use the WHERE clause here so must use HAVING--
+SELECT SupplierID,
+SUM(UnitsOnOrder) AS "total_on_order",
+AVG(UnitsOnOrder) AS "average_on_order"
+FROM Products
+GROUP BY SupplierID
+HAVING AVG(UnitsOnOrder) > 5;
+
+
+--ALIASING--
+/*Using table Alias. MUST use AS for columuns.  Do the table alias after FROM first then you can use it to easily identify columns in that table
+You must alias new columns - ones you create using aggregates or concats*/
+
+--single letter for table--
+SELECT c.CompanyName, c.City, c.Country, c.Region
+FROM Customers c
+WHERE c.Region='BC';
+
+--AS for columns--
+SELECT o.ShipCountry
+    ,SUM(o.Freight) AS "TotalFreightbyCountry"
+FROM Orders o
+GROUP BY o.ShipCountry;
+
+
 
 
 /*Using Operators
@@ -213,12 +262,6 @@ WHERE EmployeeID IN (5, 7);
 --Apostrophe--
 'O''''Brien'
 
---ALIASING--
---Using table Alias. MUST use AS for columuns.  Do the table alias after FROM first then you can use it to easily identify columns in that table--
-
-SELECT c.CompanyName, c.City, c.Country, c.Region
-FROM Customers c
-WHERE c.Region='BC';
 
 --TOP and LIMIT--
 --TOP comes immediately after the SELECT. LIMIT after the selection--

@@ -20,6 +20,11 @@ for the maximium of a column for all rows selected
 
 --SUM--
 
+SELECT SUM(Freight) AS "TotalFreightFromGermany"
+FROM Orders
+WHERE ShipCountry = 'Germany';
+
+
 SELECT SUM(p.UnitsOnOrder) AS "total_order"
 ,AVG(p.UnitsOnOrder) AS "average_on_order"
 ,MIN(p.UnitsOnOrder) AS "min_on_order"
@@ -40,10 +45,6 @@ GROUP BY p.SupplierID;
 SELECT AVG(Quantity) AS "AverageQuantity"
 FROM [Order Details];
 
---Use GROUP BY to calculate the AVERAGE reorder level for all products by category ID--
-SELECT p.CategoryID, AVG(p.ReorderLevel)
-FROM Products p
-GROUP BY p.CategoryID;
 
 --What was the highest reorder level?--
 SELECT p.CategoryID, AVG(p.ReorderLevel)
@@ -64,23 +65,19 @@ AVG(UnitsOnOrder) AS "average_on_order"
 FROM Products
 GROUP BY SupplierID
 
---I only want to see suppliers who have an average of 5 or more orders. Can't use the WHERE clause here so must use HAVING--
-SELECT SupplierID,
-SUM(UnitsOnOrder) AS "total_on_order",
-AVG(UnitsOnOrder) AS "average_on_order"
-FROM Products
-GROUP BY SupplierID
-HAVING AVG(UnitsOnOrder) > 5;
 
 --MIN/MAX--
 Select MIN(Quantity) AS "Minimum"
     ,MAX(Quantity) AS "Maximum"
 FROM [Order Details];
 
-SELECT MAX(Freight)
+SELECT MAX(Freight) AS "MaxFreight"
 FROM Orders
 WHERE ShipCountry = 'France';
 
+SELECT MIN(Freight) AS "MinFreight"
+FROM Orders
+WHERE ShipCountry = 'Germany';
 
 SELECT *
 FROM Orders
