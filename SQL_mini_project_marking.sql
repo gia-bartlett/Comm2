@@ -209,7 +209,7 @@ GROUP BY MONTH(o.OrderDate)
     ,YEAR(o.OrderDate)
 ORDER BY OrderYear, OrderMonth;
 
-
+--CORRECT--
 
 --Another option--
 /*
