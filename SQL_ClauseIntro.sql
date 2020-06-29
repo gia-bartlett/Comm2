@@ -9,6 +9,8 @@
 -GROUP BY
 -HAVING
 -ALIASING
+-CAST
+-CONVERT
 */
 
 --DISTINCT--
@@ -164,18 +166,6 @@ SELECT *
 FROM Employees
 ORDER BY Title, LastName;
 
-/*Use ORDER BY to identify the highest Net Total in the Order Details table
-What are the two order numbers with the highest total?*/
-
-SELECT TOP 2
-OrderID,
-Unitprice AS 'UnitPrice',
-Quantity,
-Discount,
-ROUND((UnitPrice * Quantity * (1.00- Discount)),2) AS 'NetTotal'
-FROM [Order Details]
-ORDER BY 'NetTotal' DESC;
-
 
 --GROUP BY--
 --follows the FROM--
@@ -208,7 +198,7 @@ HAVING AVG(UnitsOnOrder) > 5;
 
 --ALIASING--
 /*Using table Alias. MUST use AS for columuns.  Do the table alias after FROM first then you can use it to easily identify columns in that table
-You must alias new columns - ones you create using aggregates or concats*/
+You must alias new columns - ones you create using aggregates, CONCAT, CAST*/
 
 --single letter for table--
 SELECT c.CompanyName, c.City, c.Country, c.Region
@@ -220,6 +210,17 @@ SELECT o.ShipCountry
     ,SUM(o.Freight) AS "TotalFreightbyCountry"
 FROM Orders o
 GROUP BY o.ShipCountry;
+
+
+--CAST--
+/*converts a value (of any type) into a specified datatype
+Useful when combing two data types into one column (ie name and age)*/
+--CAST(expression AS datatype(length))--
+
+SELECT CAST(Freight AS INT) AS "NoDecimalFreight"
+FROM Orders;
+
+--CONVERT--
 
 
 
@@ -316,19 +317,6 @@ FROM [Order Details];
 
 SELECT * FROM [Order Details];
 
-/*Apples--> Price--> 2 Pounds, quantity=10, Discount -25% = (2*10)*0.75
-Gross Total(The cost apple excluding the discount) = £20
-Net Total (The amount I pay the shopkeeper) = £15*/
-
---Add a new column to the SQL below to show the 'Net Total' which has the discount column applied to it.--
-SELECT 
-UnitPrice,
-Quantity, 
-Discount, 
-UnitPrice * Quantity AS 'GrossTotal', 
-ROUND((UnitPrice * Quantity * (1.00-Discount)),2) AS 'NetTotal'
-FROM [Order Details]
-ORDER BY 'GrossTotal' DESC;
 
 --CHARINDEX PRACTICE--
 USE Northwind

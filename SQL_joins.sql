@@ -3,58 +3,62 @@
 Create a list of combined rows of matching data from different tables
 There must be a PRIMARY KEY/FOREIGN KEY relationship between the tables ON which to join them
 Left to right alignment unless certain columns selected in which case they will apear in order written
-Use ERD diagram to traverse between tables and see ways to join them*/
+Use ERD diagram to traverse between tables and see ways to join them
+You can put the columns in the order you want them to appear in the SELECT*/
 
---INNER JOIN--
+/*
+-INNER:
+Only selects matching records from both tables
+-LEFT:
+Joins ALL in LEFT table to matching records from RIGHT
+-RIGHT:
+Joins ALL in RIGHT table to matching records from LEFT
+-FULL OUTER:
+Joins EVERYTHING - will place NULLs in each side where there isn't a matching value
+*/
+
+--INNER JOIN (830 rows)--
 --simple join - all matching rows are returned--
 
-SELECT o.OrderID
-    ,c.ContactName
+SELECT *
 FROM Orders o
 INNER JOIN Customers c
 ON o.CustomerID = c.CustomerID
 ORDER BY c.ContactName;
 
---OUTER JOIN / FULL OUTER JOIN--
---everything is included - both tables AND all matching results--
-SELECT c.ContactName
-    ,o.OrderDate
-    ,c.City
-    ,o.RequiredDate
-    ,o.ShipAddress
+--LEFT JOIN (LEFT OUTER JOIN) (832 rows)--
+--all from left table and all matching right--
+SELECT *
+FROM Customers c
+LEFT JOIN Orders o
+ON c.CustomerID = o.CustomerID;
+
+--RIGHT JOIN (RIGHT OUTER JOIN) (830 rows)--
+--all matching from left and all from right table--
+SELECT *
+FROM Orders o
+RIGHT JOIN Employees e
+ON o.EmployeeID = e.EmployeeID;
+
+--OUTER JOIN / FULL OUTER JOIN (832 rows)--
+--everything is included - both tables AND all matching results (there will be NULLs on both sides where there weren't matching values)--
+SELECT *
 FROM Customers c
 FULL OUTER JOIN Orders o
 ON c.CustomerID = o.CustomerID
 ORDER BY c.ContactName;
 
---LEFT JOIN (LEFT OUTER JOIN)--
---all from left table and all matching right--
-SELECT c.ContactName
-    ,o.OrderID
-FROM Customers c
-LEFT JOIN Orders o
-ON c.CustomerID = o.CustomerID;
-
---RIGHT JOIN (RIGHT OUTER JOIN)--
---all matching from left and all from right table--
-SELECT o.OrderID
-    ,e.LastName
-    ,e.FirstName
-FROM Orders o
-RIGHT JOIN Employees e
-ON o.EmployeeID = e.EmployeeID;
-
-
 --INNER JOIN v OUTER JOIN--
---INNER--
-SELECT c.customerID, c.contactName, o.employeeID, o.ShipCity
+--INNER (830 rows)--
+SELECT *
 FROM orders o 
 INNER JOIN customers c
 ON c.customerID = o.CustomerID
 ORDER BY EmployeeID;
 
---OUTER--
-SELECT c.customerID, c.contactName, o.employeeID, o.ShipCity
+--OUTER (832 rows)--
+--2 people who are contacts have not had orders placed--
+SELECT *
 FROM orders o 
 FULL OUTER JOIN customers c
 ON c.customerID = o.CustomerID

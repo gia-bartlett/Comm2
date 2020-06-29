@@ -1,5 +1,13 @@
 /*AGREGATE FUNCTIONS:
 Must give them a column name (AS "<column_name>") other a new column is created with no name
+-Discount:
+Apples--> Price--> £2, quantity=10, Discount -25% = (2*10)*0.75
+Gross Total(The cost apple excluding the discount) = £20
+Net Total (The amount I pay the shopkeeper) = £15
+
+100% =1*price
+Discount of 20% =0.2*price
+Price after discount = (1-Discount)*price
 
 -SUM:
 for the total of a column for all rows selected
@@ -16,7 +24,12 @@ for the maximium of a column for all rows selected
 
 -COUNT:
 <column_name> for the number of NOT NULL rows selected. If * is used then ALL rows are counted.
+
+-ROUND:
+rounds a number to a specified number of decimal places
 */
+
+
 
 --SUM--
 
@@ -96,6 +109,38 @@ FROM Orders o
 WHERE EmployeeID IN (5, 7)
 GROUP BY o.EmployeeId;
 
+
+--ROUND--
+
+SELECT AVG(UnitPrice) AS "AveragePrice"
+FROM [Order Details];
+
+SELECT ROUND(AVG(UnitPrice),2) AS "AveragePriceRounded"
+FROM [Order Details];
+
+
+/*Use ORDER BY to identify the highest Net Total in the Order Details table
+What are the two order numbers with the highest total?*/
+
+SELECT TOP 2
+OrderID,
+Unitprice AS 'UnitPrice',
+Quantity,
+Discount,
+ROUND((UnitPrice * Quantity * (1.00-Discount)),2) AS 'NetTotal'
+FROM [Order Details]
+ORDER BY 'NetTotal' DESC;
+
+
+--Add a new column to the SQL below to show the 'Net Total' which has the discount column applied to it.--
+SELECT 
+UnitPrice,
+Quantity, 
+Discount, 
+UnitPrice * Quantity AS 'GrossTotal', 
+ROUND((UnitPrice * Quantity * (1.00-Discount)),2) AS 'NetTotal'
+FROM [Order Details]
+ORDER BY 'GrossTotal' DESC;
 
 
 
