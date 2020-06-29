@@ -183,7 +183,7 @@ WHERE UnitsInStock > 0 AND UnitPrice > 29.99;
 
 --What are names and product IDs of the products with a unit price below 5.00--
 
-SELECT * FROM Products;
+SELECT * FROM Products
 
 SELECT p.ProductName, p.productID, p.UnitPrice
 FROM Products p

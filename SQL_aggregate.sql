@@ -14,7 +14,7 @@ for the minimus value of a column for all rows selected
 for the maximium of a column for all rows selected
 
 -COUNT:
-for the number of NOT NULL rows selected. If * is used then ALL rows are counted
+for the number of NOT NULL rows selected. If * is used then ALL rows are counted.
 */
 
 --SUM--

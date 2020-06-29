@@ -14,7 +14,7 @@ FROM employees e WHERE e.TitleOfCourtesy NOT IN ('Ms.', 'Mrs.')
 --correct but has issue to in with using != OR--
 
 /*2. Create a report that shows the company name, contact title, city and country of all customers 
-in Mexico or in any city in Spain except Madrid(in Spain).*/
+in Mexico or in any city in Spain except Madrid(in Spain)*/
 
 SELECT c.CompanyName
     ,c.ContactTitle

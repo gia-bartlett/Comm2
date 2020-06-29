@@ -144,7 +144,7 @@ SELECT film_table, CHARINDEX('S', film_name) AS 'Position of Character'
 FROM film_table;
 
 --returns first to third character
-SELECT film_name, SUBSTRING(film_name, 1, 3) AS 'Extracted String' FROM film_table
+SELECT film_name, SUBSTRING(film_name, 1, 3) AS 'Extracted String' FROM film_table;
 
 -- Extracts last two characters 
 SELECT film_name, RIGHT(film_name, 2) AS 'Extracted String' FROM film_table;
