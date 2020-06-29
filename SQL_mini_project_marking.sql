@@ -1,40 +1,8 @@
---CREATE--
---SQL DATA types--
---INSERT INTO--
---SELECT--
---WHERE--
---LIKE--
---wildcards--
---CONCAT--
---formatting dates--
---AS/alias--
---JOINs--
---subqueries--
-
-/*Remember to apply all the following standards:
-•	Use consistent capitalisation and indentation of SQL Statements
-•	Use concise and consistent table alias names
-•	Use column aliases to ensure tidy column headings (spaces and consistent capitalisation)
-•	Concatenate any closely related columns e.g. First Name and Last Name or Address and City etc
-•	Put comments throughout
-*/
 
 
 --Excercise 1--
 /*1.1	Write a query that lists all Customers in either Paris or London.
         Include Customer ID, Company Name and all address fields.*/
-
-/*SELECT c.CustomerID
-    ,c.CompanyName
-    ,CONCAT(c.Address, ', ', c.City, ', ', c.PostalCode, ', ', c.Country) AS "FullAddress"
-FROM Customers c
-WHERE c.City IN ('Paris', 'London');
-
-SELECT Region
-FROM Customers
-
--how do I add Region when some places don't have it and it leaves floating comma.
-Paris and London don't have a Region so could just leave out but what if half the data did have a region?*/
 
 SELECT c.CustomerID
     ,c.CompanyName
@@ -45,7 +13,7 @@ SELECT c.CustomerID
 FROM Customers c
 WHERE c.City IN ('Paris', 'London');
 
---WOOHOO!--
+--CORRECT--
 
 /*1.2	List all products stored in bottles.*/
 
@@ -53,6 +21,8 @@ SELECT p.ProductName
     ,p.QuantityPerUnit
 FROM Products p
 WHERE p.QuantityPerUnit LIKE '%bottle%';
+
+--CORRECT--
 
 /*1.3	Repeat question above but add in the Supplier Name and Country.*/
 
@@ -63,6 +33,8 @@ FROM Products p
 INNER JOIN Suppliers s
     ON p.SupplierID = s.SupplierID
 WHERE p.QuantityPerUnit LIKE '%bottle%';
+
+--CORRECT--
 
 /*1.4	Write a SQL Statement that shows how many products there are in each category.
         Include Category Name in result set and list the highest number first.*/
@@ -75,6 +47,8 @@ INNER JOIN Categories c
 GROUP BY c.CategoryName
 ORDER BY COUNT(c.CategoryID) DESC;
 
+--Used SUM instead of COUNT--
+
 /*1.5	List all UK employees using concatenation to join their title of courtesy, first name and last name together.
         Also include their city of residence.*/
 
@@ -82,6 +56,8 @@ SELECT CONCAT(e.TitleOfCourtesy, ' ', e.FirstName, ' ', e.LastName) AS "Employee
     ,e.City AS "CityOfResidence"
 FROM Employees e
 WHERE e.Country = 'UK';
+
+--CORRECT--
 
 /*1.6	List Sales Totals for all Sales Regions (via the Territories table using 4 joins) with a Sales Total greater than 1,000,000.
         Use rounding or FORMAT to present the numbers. */
@@ -102,14 +78,17 @@ GROUP BY r.RegionID, r.RegionDescription
 HAVING ROUND(SUM(od.UnitPrice*od.Quantity),2) >= 1000000
 ORDER BY "SalesTotals" DESC;
 
-/*instructions unclear regarding value but just returning od.Quantity did not return any values higher than 1,000,000
-so looked at total as price instead*/
+--Added in ORDER BY--
 
 /*1.7	Count how many Orders have a Freight amount greater than 100.00 and either USA or UK as Ship Country.*/
 
 SELECT COUNT(o.Freight) AS "FreightTotal"
+    ,o.ShipCountry
 FROM Orders o
-WHERE (o.ShipCountry = 'USA' OR o.ShipCountry = 'UK') AND o.Freight > 100;
+WHERE (o.ShipCountry = 'USA' OR o.ShipCountry = 'UK') AND o.Freight > 100
+GROUP BY o.ShipCountry
+
+--included ShipCountry which split results. Also didn't use IN--
 
 /*1.8	Write a SQL Statement to identify the Order Number of the Order with the highest amount(value) of discount applied to that order.*/
 
@@ -118,6 +97,8 @@ SELECT TOP 1 od.Discount
     ,ROUND((od.UnitPrice * od.Quantity * (od.Discount)),2) AS "HighestNetDiscount" 
 FROM [Order Details] od
 ORDER BY "HighestNetDiscount" DESC
+
+--Using TOP 1 only returns 1 order but others have the same amount of discount--
 
 --Excercise 2--
 /*2.1 Write the correct SQL statement to create the following table:
@@ -165,23 +146,19 @@ FROM [Sparta Table]
 --Excercise 3--
 /*Write SQL statements to extract the data required for the following charts (create these in Excel):*/
 
-/*Left click top left box to select whole table
-Right click - Copy with Headers to export to Excel*/
 
 /*3.1 List all Employees from the Employees table and who they report to. No Excel required. (5 Marks)*/
 
 SELECT e.EmployeeID
     ,CONCAT(e.FirstName, ' ', e.LastName) AS "EmployeeName"
+    ,e.ReportsTo
     ,CONCAT(e2.FirstName, ' ', e2.LastName) AS "ReportsTo"
 FROM Employees e
 LEFT JOIN Employees e2
 ON e2.EmployeeID = e.ReportsTo;
 
-/*Calling reports to only give an employee ID which is not clear
-Numeric terminology is not explicit and therefore not very helpful
-Employee 2 does not report to anyone therefore an INNER JOIN would leave him out - which might be fine here
-BUT what if you were looking at a table with sales data?
-People were missing out data then using an INNER JOIN might leave valuable data out*/
+--Put EmployeeID twice--
+
 
 /*3.2 List all Suppliers with total sales over $10,000 in the Order Details table. Include the Company Name from the Suppliers Table and present as a bar chart*/
 
@@ -195,6 +172,8 @@ ON p.SupplierID = s.SupplierID
 GROUP BY s.CompanyName
 HAVING SUM(od.UnitPrice*od.Quantity*(1-od.Discount)) > 10000
 ORDER BY 2 DESC;
+
+--CORRECT--
 
 /*3.3 List the Top 10 Customers YTD for the latest year in the Orders file. Based on total value of orders shipped. No Excel required.*/
 
@@ -216,14 +195,9 @@ FROM
             ,c.CompanyName) a
 WHERE a.YearOfOrder = (SELECT YEAR(MAX(OrderDate)) FROM Orders)
 ORDER BY a.YearOfOrder
-        ,a.TotalSalePrice  DESC
+        ,a.TotalSalePrice  DESC;
 
-/*
-Subquery is data prep and then use it once data is in format desired.
-WHERE YEAR(o.OrderDate) = 1998 will only work while we're in 1998 as the year is hardcoded
-Using (SELECT YEAR(MAX(OrderDate)) FROM Orders) allows this field to become dynamic
-So as soon as 1999 starts the code will begin again - allowing the same code to be used continually instead of having to be updated at the beginning of each year.
-Used CamelCase because including spaces means that the column later have to be enclosed in [square brackets]*/
+--CORRECT--
 
 /*3.4 Plot the Average Ship Time by month for all data in the Orders Table using a line chart as below.*/
 
@@ -233,10 +207,9 @@ SELECT MONTH(o.OrderDate) AS "OrderMonth"
 FROM Orders o
 GROUP BY MONTH(o.OrderDate)
     ,YEAR(o.OrderDate)
-ORDER BY OrderMonth, OrderYear;
+ORDER BY OrderYear, OrderMonth;
 
-/*Put decimal points in to make the Excel data more accurate.
-Must include YEAR as well as MONTH as 1996, 1997 and 1998 all have July's etc*/
+
 
 --Another option--
 /*
