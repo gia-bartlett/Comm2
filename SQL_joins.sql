@@ -17,6 +17,8 @@ Joins ALL in RIGHT table to matching records from LEFT
 Joins EVERYTHING - will place NULLs in each side where there isn't a matching value
 */
 
+--UNION/UNION ALL--
+
 --INNER JOIN (830 rows)--
 --simple join - all matching rows are returned--
 
@@ -188,3 +190,24 @@ FROM [Order Details] od
 INNER JOIN  Products p
     ON od.ProductID=p.ProductID
         WHERE p.Discontinued = 1;
+
+
+--UNION and UNION ALL--
+
+--UNION--
+/*combine data from multiple tables into one result leaving out duplicates*/
+SELECT e.EmployeeID AS "Employee/Supplier"
+FROM Employees e
+UNION
+SELECT s.SupplierID
+FROM Suppliers s --29 rows returned--
+
+--UNION ALL--
+/*combine data from multiple tables into one result even if there are duplicates*/
+
+SELECT e.EmployeeID AS "Employee/Supplier"
+FROM Employees e
+UNION ALL
+SELECT s.SupplierID
+FROM Suppliers s --38 rows--
+

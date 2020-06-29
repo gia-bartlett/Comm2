@@ -9,8 +9,10 @@
 -GROUP BY
 -HAVING
 -ALIASING
--CAST
--CONVERT
+-CAST/CONVERT
+-CONCAT
+-SUBSTRINGS
+-ARITHMETIC OPERATORS
 */
 
 --DISTINCT--
@@ -221,8 +223,166 @@ SELECT CAST(Freight AS INT) AS "NoDecimalFreight"
 FROM Orders;
 
 --CONVERT--
+/*Same as CAST*/
 
 
+--CONCAT--
+
+--'City' select city and country in one column using concat operator +--
+--Option 1 (without CONCAT)--
+SELECT c.companyName AS 'CompanyName', c.city + ', ' + ' '+  Country As 'City'
+FROM Customers c;
+
+--Option 2--
+SELECT c.CompanyName AS 'CompanyName'
+    ,CONCAT(c.city, ', ',c.country) AS City
+FROM Customers c;
+
+/*Write a select using the Employees table and concat First Name and Last Name together. Use column alias to rename the column to Employee Name*/
+SELECT e.EmployeeID as 'EmployeeID'
+    ,CONCAT(e.FirstName,' ', e.LastName) AS 'EmployeeName'
+FROM Employees e;  -- Should return First Name and Last Name in the same columm called Employee Name
+
+--CONCAT varchar and int--
+SELECT CONCAT(FirstName, ', ', CAST(EmployeeID AS VARCHAR(10))) AS "EmployeeNameandID"
+FROM Employees;
+
+--STRING FUNCTIONS--
+
+--CHARINDEX--
+--Returns index of character. In SQL index starts at 1 not 0.
+SELECT FirstName, CHARINDEX('A', FirstName) AS 'Position of Character'
+FROM Employees;
+
+--Example 2--
+--What if they have E more than once in their name?--
+SELECT FirstName, CHARINDEX('A', FirstName) AS 'Position of Character'
+FROM Employees;
+
+--CHARINDEX PRACTICE--
+USE Northwind
+
+SELECT PostalCode 'Postcode', 
+LEFT(PostalCode, CHARINDEX(' ', PostalCode)-1) AS 'PostcodeRegion',
+    CHARINDEX(' ',PostalCode) AS 'SpaceFound', 
+Country
+FROM Customers 
+WHERE country ='UK';
+
+/*Without -1 it will give index 4 
+-1 will extract the post code region that reaches the first space then eliminate the white space*/
+
+/*Use CHARINDEX to list only Product Names that contain a single quote*/
+/*Note:Column Alias cannot be used in a WHERE*/
+/*For single quote use two single quotes to 'escape' it*/
+
+SELECT * FROM  Products;
+
+SELECT p.ProductName "Product Names",
+CHARINDEX('''', p.ProductName) AS "Index of Quote"
+FROM Products p
+WHERE CHARINDEX('''', p.productName) > 0;
+
+
+--SELECT * FROM TableName WHERE CHARINDEX('''',ColumnName) > 0--
+
+/*Option 2 with LIKE*/
+SELECT p.ProductName 
+FROM Products p
+WHERE p.productName LIKE '%''%';
+--Finds single quotes--
+
+
+--SUBSTRING--
+--returns first to third character
+SELECT FirstName, SUBSTRING(FirstName, 1, 3) AS 'Extracted String'
+FROM Employees;
+
+-- Extracts last two characters 
+SELECT FirstName, RIGHT(FirstName, 2) AS 'Extracted String'
+FROM Employees;
+
+-- Extracts first two characters
+SELECT FirstName, LEFT(FirstName, 2) AS 'Extracted String'
+FROM Employees;
+
+--TRIM--
+SELECT ('     hello    ');
+--RTRIM - Removes white spaces from the end--
+SELECT RTRIM('     hello    ');
+'     hello'
+
+SELECT FirstName, RTRIM(FirstName) AS 'Trimmed String'
+FROM Employees;
+
+--LTRIM - Removes white spaces from the beginning--
+SELECT LTRIM('     hello    ');
+'hello    '
+
+SELECT FirstName, LTRIM(FirstName) AS 'Trimmed String'
+FROM Employees;
+
+--TRIM - Trim both sides of white space--
+SELECT TRIM('     hello    ');
+'hello'
+
+SELECT FirstName, TRIM(FirstName) AS 'Trimmed String'
+FROM Employees;
+ 
+--Removes the space with the character A
+SELECT FirstName, REPLACE(FirstName, ' ', 'A') AS 'Replaced String'
+FROM Employees;
+
+--LENGTH--
+--Calculates length of string, spaces included.
+SELECT FirstName, LEN(FirstName) AS 'Length of String'
+FROM Employees;
+
+--Find the longest name in the company--
+SELECT MAX(LEN(FirstName)) AS 'LongestName'
+FROM Employees;
+
+SELECT FirstName, MAX(LEN(FirstName)) AS 'LongestName'
+FROM Employees
+GROUP BY FirstName
+ORDER BY LongestName DESC;
+
+--UPPER and LOWER. Change to uppercase or lowercase--
+SELECT FirstName, 
+UPPER(FirstName) AS 'Uppercase String', 
+LOWER(FirstName) AS 'Lower String'
+FROM Employees;
+
+
+--ARITHMETIC OPERATORS--
+
+-- +
+SELECT UnitPrice
+    ,Quantity
+    ,UnitPrice + Quantity AS "GrossTotal"
+FROM [Order Details];
+
+SELECT HireDate
+      ,HireDate + 7 AS "SecondWeek"
+FROM Employees; --add days
+
+-- *
+SELECT UnitPrice, Quantity, Discount, UnitPrice * Quantity AS 'GrossTotal'
+FROM [Order Details];
+
+
+
+--IS/IS NOT NULL--
+
+--IS NULL--
+SELECT c.CompanyName AS 'CompanyName', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
+FROM Customers c
+WHERE Region IS NULL;
+
+--IS NOT NULL--
+SELECT c.CompanyName AS 'CompanyName', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
+FROM Customers c
+WHERE Region IS NOT NULL;
 
 
 /*Using Operators
@@ -276,33 +436,7 @@ SELECT p.ProductName, p.UnitPrice
 FROM Products p
 WHERE UnitsInStock > 0 AND UnitPrice > 29.99;
 
---CONCATENATION--
 
---'City' select city and country in one column using concat operator +--
---Option 1--
-SELECT c.companyName AS 'CompanyName', c.city + ', ' + ' '+  Country As 'City'
-FROM Customers c;
-
---Option 2--
-SELECT c.CompanyName AS 'CompanyName',
-CONCAT(c.city, ', ',c.country) AS City
-FROM Customers c;
-
-/*Write a select using the Employees table and concat First Name and Last Name together. Use column alias to rename the column to Employee Name*/
-SELECT * FROM Employees;
-
-SELECT e.EmployeeID as 'EmployeeID', CONCAT(e.FirstName,' ', e.LastName) AS 'EmployeeName'
-FROM Employees e;  -- Should return First Name and Last Name in the same columm called Employee Name
-
-/*IS NULL*/
-SELECT c.CompanyName AS 'CompanyName', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
-FROM Customers c
-WHERE Region IS NULL;
-
---IS NOT NULL--
-SELECT c.CompanyName AS 'CompanyName', CONCAT(c.City, ' ', c.Country) AS 'City', c.Region
-FROM Customers c
-WHERE Region IS NOT NULL;
 
 /*Write a SELECT statement to list the six countries that have Region Codes in the Customers Table*/
 SELECT * FROM Customers;
@@ -310,43 +444,3 @@ SELECT * FROM Customers;
 SELECT TOP 6 c.Country, c.Region
 FROM Customers c
 WHERE Region IS NOT NULL;
-
---ARITHMETIC OPERATORS--
-SELECT UnitPrice, Quantity, Discount, UnitPrice * Quantity AS 'GrossTotal'
-FROM [Order Details];
-
-SELECT * FROM [Order Details];
-
-
---CHARINDEX PRACTICE--
-USE Northwind
-
-SELECT PostalCode 'Postcode', 
-LEFT(PostalCode, CHARINDEX(' ', PostalCode)-1) AS 'PostcodeRegion',
-    CHARINDEX(' ',PostalCode) AS 'SpaceFound', 
-Country
-FROM Customers 
-WHERE country ='UK';
-
-/*Without -1 it will give index 4 
--1 will extract the post code region that reaches the first space then eliminate the white space*/
-
-/*Use CHARINDEX to list only Product Names that contain a single quote*/
-/*Note:Column Alias cannot be used in a WHERE*/
-/*For single quote use two single quotes to 'escape' it*/
-
-SELECT * FROM  Products;
-
-SELECT p.ProductName "Product Names",
-CHARINDEX('''', p.ProductName) AS "Index of Quote"
-FROM Products p
-WHERE CHARINDEX('''', p.productName) > 0;
-
-
---SELECT * FROM TableName WHERE CHARINDEX('''',ColumnName) > 0--
-
-/*Option 2 with LIKE*/
-SELECT p.ProductName 
-FROM Products p
-WHERE p.productName LIKE '%''%';
---Finds single quotes--

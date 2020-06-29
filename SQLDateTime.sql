@@ -1,15 +1,23 @@
 --DATE FUNCTIONS--
 --365.25 days in a year--
 
+/*
+-GETDATE
+
+-CONVERT DATES*/
+
 --GETDATE--
 /*return the current date and time*/
 SELECT GETDATE()
+
 --SYSDATETIME--
 /*return the date andf time of the computer being used*/
 SELECT SYSDATETIME()
+
 --DATEADD--
 /*d for current day, m for current month, yy for current year*/
 DATEADD(<d, m, or yy>, <number to add>, <column to add to>) AS "due_date" --to add 5 days--
+
 --DATEDIFF--
 /*d for current day, m for current month, yy for current year*/
 DATEDIFF(<d, m, or yy>, OrderDate, ShippedDate) AS "ship_days" --to calculate the difference between dates--
@@ -74,4 +82,12 @@ CONCAT(FirstName, ' ', LastName) AS "name"
 FROM Employees e;
 
 
---
+--CONVERTING DATES--
+SELECT CONVERT(NVARCHAR, HireDate, 101)
+FROM Employees;
+(05/01/1992)
+
+SELECT CONVERT(NVARCHAR, HireDate, 103)
+FROM Employees;
+(01/05/1992)
+

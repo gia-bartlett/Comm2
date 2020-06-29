@@ -7,13 +7,24 @@ comments*/
 
 --Relational databases coined by Edgar F. Codd--
 
+/*
+-DROP
+-CREATE
+-USE
+-INSERT
+-SELECT
+-ALTER
+-FROM
+-UPDATE
+*/
+
 --DELETE A DATABASE--
-DROP DATABASE georgina_bartlett
+DROP DATABASE georgina_bartlett;
 
 --CREATE A NEW DATABASE--
-CREATE DATABASE georgina_bartlett
+CREATE DATABASE georgina_bartlett;
 
---USIE A DATABASE--
+--USE A DATABASE--
 USE georgina_bartlett;
 
 DROP TABLE film_table
@@ -57,18 +68,6 @@ VALUES (
     ,'https://www.imdb.com/title/tt0100263/'
     ,'A teen who robs a pharmacy and shoots a policeman is sentenced to life in prison.'
     ,'1990/02/17'
-)
-(
-    'The Fifth Element'
-    ,'Action'
-    ,'1997/05/09'
-    ,'Luc Besson'
-    ,'Luc Besson'
-    ,5
-    ,'English'
-    ,'https://www.imdb.com/title/tt0119116/'
-    ,'In the colorful future, a cab driver unwittingly becomes the central figure in the search for a legendary cosmic weapon to keep Evil and Mr. Zorg at bay.'
-    ,'1990/05/09'
 );
 
 SELECT * FROM film_table;
@@ -134,43 +133,6 @@ REFERENCES film_table (film_id) ON DELETE CASCADE
 DELETE FROM film_table WHERE film_id =1;
 
 SELECT * FROM director;
-
---STRING FUNCTIONS--
-USE georgina_bartlett
-SELECT * FROM film_table
-
---Returns index of character. In SQL index starts at 1 not 0.
-SELECT film_table, CHARINDEX('S', film_name) AS 'Position of Character'
-FROM film_table;
-
---returns first to third character
-SELECT film_name, SUBSTRING(film_name, 1, 3) AS 'Extracted String' FROM film_table;
-
--- Extracts last two characters 
-SELECT film_name, RIGHT(film_name, 2) AS 'Extracted String' FROM film_table;
-
--- Extracts first two characters
-SELECT film_name, LEFT(film_name, 2) AS 'Extracted String' FROM film_table;
-
---Removes white spaces from the end
-SELECT film_name, RTRIM(film_name) AS 'Trimmed String' FROM film_table;
-
---Removes white spaces from the beginning
-SELECT film_name, LTRIM(film_name) AS 'Trimmed String' FROM film_table;
- 
---Removes the space with the character A
-SELECT film_name, REPLACE(film_name, ' ', 'A') AS 'Replaced String' FROM film_table;
-
---Calculates length of string, spaces included.
-SELECT film_name, LEN(film_name) AS 'Length of String' FROM film_table;
-
---UPPER and LOWER. Change to uppercase or lowercase--
-SELECT film_name, 
-UPPER(film_name) AS 'Uppercase String', 
-LOWER(film_name) AS 'Lower String'
-FROM film_table;
-
---
 
 
 

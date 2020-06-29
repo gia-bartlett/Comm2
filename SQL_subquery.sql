@@ -53,20 +53,4 @@ FROM [Order Details] o
 GROUP BY o.ProductID) sq1 ON sq1.ProductID=od.ProductID
 
 
---UNION--
-/*combine data from multiple tables into one result leaving out duplicates*/
-SELECT e.EmployeeID AS "Employee/Supplier"
-FROM Employees e
-UNION
-SELECT s.SupplierID
-FROM Suppliers s --29 rows returned--
-
---UNION ALL--
-/*combine data from multiple tables into one result even if there are duplicates*/
-
-SELECT e.EmployeeID AS "Employee/Supplier"
-FROM Employees e
-UNION ALL
-SELECT s.SupplierID
-FROM Suppliers s --38 rows--
 
