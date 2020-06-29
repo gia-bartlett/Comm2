@@ -7,6 +7,10 @@ SELECT e.TitleOfCourtesy
 FROM Employees e
 WHERE e.TitleOfCourtesy NOT IN ('Ms.','Mrs.');
 
+--ANSWER--
+SELECT e.TitleOfCourtesy, e.FirstName, e.LastName
+FROM employees e WHERE e.TitleOfCourtesy NOT IN ('Ms.', 'Mrs.')
+
 --correct but has issue to in with using != OR--
 
 /*2. Create a report that shows the company name, contact title, city and country of all customers 
@@ -18,6 +22,10 @@ SELECT c.CompanyName
     ,c.Country
 FROM Customers c
 WHERE c.Country IN ('Mexico','Spain') AND c.City NOT IN ('Madrid');
+
+--ANSWER--
+SELECT c.CompanyName, c.ContactTitle, c.City, c.Country
+FROM customers c WHERE Country IN ('Mexico','Spain') AND CITY NOT IN ('Madrid')
 
 --correct except I first spelled Mexico wrong!--
 
@@ -31,6 +39,10 @@ SELECT e.TitleOfCourtesy
 FROM Employees e
 WHERE e.TitleOfCourtesy LIKE 'M_.';
 
+--ANSWER--
+SELECT e.TitleOfCourtesy, e.FirstName, e.LastName
+FROM Employees e WHERE e.TitleOfCourtesy LIKE ('M%.')
+
 --correct - no issues but didn't use brackets around the LIKE argument?--
 
 /*4. Create a report showing the first and last names of
@@ -40,6 +52,10 @@ SELECT e.FirstName
     ,e.LastName
 FROM Employees e
 WHERE e.Region IS NOT NULL;
+
+--ANSWER--
+SELECT e.FirstName, e.LastName
+FROM Employees e WHERE e.Region IS NOT NULL
 
 --correct - no issues--
 
@@ -53,6 +69,10 @@ SELECT e.Title
 FROM Employees e
 ORDER BY e.Title, e.LastName DESC;
 
+--ANSWER--
+SELECT e.TitleOfCourtesy, e.FirstName, e.LastName
+FROM Employees e ORDER BY e.TitleOfCourtesy, e.LastName DESC
+
 --correct - but used Title instead of Title of Courtesy which is in answer because that's what the question is asking?--
 
 /*6. Write a query to get the number of employees with the same job title.*/
@@ -61,6 +81,11 @@ SELECT e.Title
     ,COUNT(e.EmployeeID) AS "Number of Employees"
 FROM Employees e
 GROUP BY e.Title;
+
+--ANSWER--
+SELECT e.Title,COUNT(e.EmployeeID) AS "Count of Number of Employees with same job title"
+FROM Employees e
+GROUP BY e.Title
 
 --used title in distinct first but only returned 1s and after selecting all I could see more than 1 rep so tried EmployeeID)
 
@@ -85,6 +110,14 @@ ON o.CustomerID = c.CustomerID
 WHERE o.ShippedDate > o.RequiredDate AND o.OrderDate > '1998-01-01'
 ORDER BY c.CompanyName;
 
+--ANSWER--
+SELECT o.OrderID, c.CompanyName, e.FirstName, e.LastName
+FROM Employees e
+	JOIN Orders o ON (e.EmployeeID = o.EmployeeID)
+	JOIN Customers c ON (c.CustomerID = o.CustomerID)
+WHERE o.ShippedDate > o.RequiredDate AND o.OrderDate > '1998-01-01'
+ORDER BY c.CompanyName;
+
 /*correct but took a while and forgot to ORDER BY company name.
 Guessed using LEFT JOIN - need more practice to get more familiar with which one to use.
 Getting better working out joins with the ERD
@@ -104,6 +137,13 @@ ON od.ProductID = p.ProductID
 GROUP BY p.ProductName
 HAVING SUM(od.Quantity) < 200;
 
+--ANSWER--
+SELECT p.ProductName, SUM(od.Quantity) AS "TotalUnits"
+FROM [Order Details] od JOIN Products p ON
+	(p.ProductID = od.ProductID)
+GROUP BY p.ProductID,p.ProductName
+HAVING SUM(od.Quantity) < 200;
+
 /*Tried to ORDER BY instead of GROUP BY.
 Still guessing which join to use - again went left to right using left join
 Checked answer and missed out grouping by ProductID but got a similar answer so not sure what the relevance was?*/
@@ -121,6 +161,15 @@ GROUP BY c.CustomerID
 HAVING COUNT(o.OrderID) > 15
 ORDER BY "NumOrders" DESC;
 
+--ANSWER--
+SELECT c.CustomerID, COUNT(o.OrderID) AS "NumOrders"
+FROM Customers c JOIN Orders o ON
+	(c.CustomerID = o.CustomerID)
+WHERE OrderDate >= '31-Dec-1996'
+GROUP BY c.CustomerID
+HAVING COUNT(o.OrderID) > 15
+ORDER BY NumOrders DESC;
+
 /*Used a right join as was working right to left from ERD
 Did not initially ORDER BY but still got correct answer - tidied it up with checking*/
 
@@ -133,6 +182,12 @@ FROM Customers c
 LEFT JOIN Orders o
 ON c.customerID = o.CustomerID
 GROUP BY c.CustomerID;
+
+--ANSWER--
+SELECT c.CustomerID, COUNT(o.OrderID) AS "Number Of Orders Placed by Customer"
+FROM Customers c LEFT JOIN Orders o
+ON c.CustomerID=o.CustomerID
+GROUP BY c.CustomerID
 
 /*correct but slightly different from answer page
 did a LEFT JOIN to ensure I included any NULL values
