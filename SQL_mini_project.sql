@@ -128,13 +128,13 @@ WHERE (od.UnitPrice * od.Quantity * (od.Discount)) = (
     Add any other columns you feel would be appropriate. 
     IMPORTANT NOTE: For data protection reasons do NOT include date of birth in this exercise.*/
 
-IF OBJECT_ID('Sparta Table', 'U') IS NOT NULL
-DROP TABLE [Sparta Table];
+IF OBJECT_ID('Spartans Table', 'U') IS NOT NULL
+DROP TABLE [Spartans Table];
 
 /*added in DROP TABLE but made it fancy after some reseach.
 'U' stands for only table names*/
 
-CREATE TABLE [Sparta Table](
+CREATE TABLE [Spartans Table](
     StudentID INT IDENTITY(1,1)
     ,Title VARCHAR(12) NOT NULL
     ,FirstName VARCHAR(50) NOT NULL
@@ -145,7 +145,7 @@ CREATE TABLE [Sparta Table](
     ,PRIMARY KEY (StudentID) );
 
 /*2.2 Write SQL statements to add the details of the Spartans in your course to the table you have created.*/
-INSERT INTO [Sparta Table](Title, FirstName, LastName, University, Course, Grade)
+INSERT INTO [Spartans Table](Title, FirstName, LastName, University, Course, Grade)
 VALUES ('Miss', 'Georgina', 'Bartlett', 'Newcastle University', 'Archaeology', '2:1')
 ,('Mr', 'Humza', 'Malak', 'University of Kent', 'Computer Science', '2:2')
 ,('Mr', 'Ibrahim', 'Bocus', 'University of Leicester', 'Mechanical Engineering', '2:1')
@@ -162,7 +162,7 @@ VALUES ('Miss', 'Georgina', 'Bartlett', 'Newcastle University', 'Archaeology', '
 
 --TEST--
 SELECT *
-FROM [Sparta Table]
+FROM [Spartans Table]
 
 --Excercise 3--
 /*Write SQL statements to extract the data required for the following charts (create these in Excel):*/

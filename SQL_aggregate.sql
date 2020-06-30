@@ -1,5 +1,6 @@
 /*AGREGATE FUNCTIONS:
 Must give them a column name (AS "<column_name>") other a new column is created with no name
+
 -Discount:
 Apples--> Price--> £2, quantity=10, Discount -25% = (2*10)*0.75
 Gross Total(The cost apple excluding the discount) = £20
